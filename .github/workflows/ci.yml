@@ -1,0 +1,39 @@
+# Revisa el codigo en cada push. Si algo aqui se pone rojo, no despliegues.
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch: # permite lanzarlo a mano desde la pestaña Actions
+
+jobs:
+  verificar:
+    name: Lint, tipos, pruebas y build
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm # reutiliza node_modules entre ejecuciones
+
+      # `npm ci` instala exactamente lo del package-lock.json.
+      # Es lo correcto en CI: `npm install` podria traer versiones distintas.
+      - name: Instalar dependencias
+        run: npm ci
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Comprobar tipos
+        run: npm run typecheck
+
+      # Las firmas de Wompi. Si esto falla, el dinero esta en juego.
+      - name: Pruebas
+        run: npm test
+
+      - name: Build de produccion
+        run: npm run build
