@@ -3,6 +3,7 @@ import Reveal from "@/components/Reveal";
 import ProductCard from "@/components/ProductCard";
 import { products } from "@/lib/products";
 import { formatCOP } from "@/lib/money";
+import { asset } from "@/lib/asset";
 
 /**
  * Home. El lenguaje visual sigue tres reglas tipo Apple:
@@ -35,7 +36,7 @@ export default function Home() {
       <section className="relative flex min-h-[86vh] items-center justify-center overflow-hidden">
         <div
           className="absolute inset-0 bg-cover bg-center"
-          style={{ backgroundImage: "url(/hero.svg)" }}
+          style={{ backgroundImage: `url(${asset("/hero.svg")})` }}
           aria-hidden="true"
         />
         <div className="absolute inset-0 bg-black/35" aria-hidden="true" />
@@ -79,7 +80,7 @@ export default function Home() {
                 </div>
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
-                  src={product.image}
+                  src={asset(product.image)}
                   alt={product.name}
                   className="mt-8 w-full max-w-md object-contain"
                 />
@@ -110,7 +111,7 @@ export default function Home() {
                 >
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img
-                    src={material.image}
+                    src={asset(material.image)}
                     alt=""
                     className="w-full max-w-sm rounded-3xl object-cover"
                   />

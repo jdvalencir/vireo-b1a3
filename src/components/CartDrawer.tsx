@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useEffect } from "react";
 import { useCart } from "@/lib/cart-context";
 import { formatCOP } from "@/lib/money";
+import { asset } from "@/lib/asset";
 
 /** Panel lateral del carrito. Se abre al añadir un producto o desde la barra. */
 export default function CartDrawer() {
@@ -71,7 +72,7 @@ export default function CartDrawer() {
                 <li key={`${line.slug}-${line.color}`} className="flex gap-4 py-5">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img
-                    src={line.image}
+                    src={asset(line.image)}
                     alt={line.name}
                     className="h-20 w-20 shrink-0 rounded-xl bg-surface-alt object-cover"
                   />

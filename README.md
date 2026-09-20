@@ -121,12 +121,65 @@ src/
 
 ## 7. Desplegar
 
-La ruta más corta es Vercel:
+Este proyecto se puede construir de dos formas distintas, y la diferencia
+importa mucho.
+
+### La tienda real (cobra de verdad)
+
+Necesita un hosting que ejecute Node, porque tres rutas corren en servidor:
+`/api/checkout`, `/api/wompi/webhook` y `/checkout/resultado`.
 
 ```bash
-npx vercel
+npm run build   # build normal
+npx vercel       # o Railway, Render, un VPS...
 ```
 
-Añade las variables de entorno en el panel de Vercel (las de `.env.local`
-no se suben nunca) y actualiza `NEXT_PUBLIC_SITE_URL` y la URL de eventos
-de Wompi con tu dominio final.
+Añade las variables de entorno en el panel del hosting y actualiza
+`NEXT_PUBLIC_SITE_URL` y la URL de eventos de Wompi con tu dominio.
+
+### La demo en GitHub Pages (NO cobra)
+
+`.github/workflows/pages.yml` publica el catálogo en GitHub Pages en cada
+push a `main`. Sirve para enseñar el diseño, no para vender.
+
+**Por qué no puede cobrar.** GitHub Pages sirve archivos estáticos y nada
+más: no ejecuta código de servidor. Y eso no se arregla con configuración,
+porque firmar un cobro requiere `WOMPI_INTEGRITY_SECRET`, que por
+definición no puede viajar al navegador — quien lo tenga puede firmar un
+cobro por el monto que se le antoje. Por eso el checkout aparece
+deshabilitado con un aviso en la demo.
+
+El workflow hace tres cosas particulares:
+
+1. `rm -rf src/app/api src/app/checkout/resultado` — Next se niega a
+   exportar a estático si hay rutas de servidor. Se borran solo en la copia
+   desechable del runner; en tu repo siguen intactas.
+2. `NEXT_PUBLIC_BASE_PATH=/tienda-cuero` — en Pages el sitio cuelga de un
+   subdirectorio. Next reescribe los `<Link>` solo, pero las rutas de
+   imágenes escritas a mano no, y por eso existe `src/lib/asset.ts`.
+3. `NEXT_PUBLIC_DEMO_MODE=true` — apaga el botón de pagar y muestra el
+   aviso.
+
+Para probar ese build en tu máquina:
+
+```bash
+mv src/app/api /tmp/ && mv src/app/checkout/resultado /tmp/
+BUILD_TARGET=pages NEXT_PUBLIC_BASE_PATH=/tienda-cuero \
+  NEXT_PUBLIC_DEMO_MODE=true npm run build
+mv /tmp/api src/app/ && mv /tmp/resultado src/app/checkout/
+```
+
+El resultado queda en `out/`.
+
+> GitHub Pages en repositorios **privados** requiere un plan de pago
+> (GitHub Pro o superior). Con el plan gratuito hay que hacer el repo
+> público para publicar la demo.
+
+## 8. Comprobaciones automáticas
+
+`.github/workflows/ci.yml` corre en cada push: lint, tipos, pruebas y build.
+
+Las pruebas (`npm test`, en `src/lib/wompi.test.ts`) validan las firmas de
+Wompi contra el ejemplo publicado en su documentación, e incluyen los casos
+en que alguien manipula el monto o el estado de un webhook. Si se ponen
+rojas, no despliegues: es lo único que separa tu tienda de un cobro falso.

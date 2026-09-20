@@ -1,6 +1,7 @@
 import Link from "next/link";
 import type { Product } from "@/lib/products";
 import { formatCOP } from "@/lib/money";
+import { asset } from "@/lib/asset";
 
 export default function ProductCard({ product }: { product: Product }) {
   return (
@@ -12,7 +13,7 @@ export default function ProductCard({ product }: { product: Product }) {
         {/* Placeholder SVG. Al tener fotos reales, cambia por next/image. */}
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
-          src={product.image}
+          src={asset(product.image)}
           alt={product.name}
           className="aspect-square w-full object-cover transition-transform duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:scale-105"
         />

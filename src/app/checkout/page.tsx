@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useState, type FormEvent } from "react";
 import { useCart } from "@/lib/cart-context";
 import { formatCOP } from "@/lib/money";
+import { asset } from "@/lib/asset";
 
 /**
  * Formulario de datos de envío.
@@ -12,6 +13,13 @@ import { formatCOP } from "@/lib/money";
  * sensibles los captura Wompi en su propio dominio, así que tu sitio
  * nunca los toca y te ahorras el cumplimiento PCI.
  */
+
+/**
+ * En la demo estática (GitHub Pages) no existe /api/checkout, así que el
+ * botón de pagar no puede funcionar. En vez de dejar que falle sin
+ * explicación, lo decimos de frente.
+ */
+const IS_DEMO = process.env.NEXT_PUBLIC_DEMO_MODE === "true";
 
 const FIELDS = [
   { name: "fullName", label: "Nombre completo", type: "text", autoComplete: "name" },
@@ -31,6 +39,16 @@ export default function CheckoutPage() {
     event.preventDefault();
     setError(null);
     setIsSubmitting(true);
+
+    if (IS_DEMO) {
+      setError(
+        "Esta es una demo estática: no hay servidor que firme el cobro, " +
+          "así que el pago está deshabilitado. La tienda real necesita un " +
+          "hosting con Node (Vercel, Railway, un VPS…).",
+      );
+      setIsSubmitting(false);
+      return;
+    }
 
     const formData = new FormData(event.currentTarget);
     const customer = Object.fromEntries(
@@ -91,6 +109,15 @@ export default function CheckoutPage() {
           <form onSubmit={handleSubmit} noValidate>
             <h2 className="mb-6 text-lg font-semibold">Datos de envío</h2>
 
+            {IS_DEMO && (
+              <p className="mb-6 rounded-xl bg-amber-50 px-4 py-3 text-sm leading-relaxed text-amber-900">
+                <strong className="font-semibold">Demo sin pagos.</strong> Estás
+                viendo el catálogo publicado en GitHub Pages, que solo sirve
+                archivos estáticos. El cobro necesita un servidor que firme la
+                transacción con un secreto privado, así que aquí está apagado.
+              </p>
+            )}
+
             <div className="grid gap-5 sm:grid-cols-2">
               {FIELDS.map((field) => (
                 <label
@@ -120,7 +147,11 @@ export default function CheckoutPage() {
               disabled={isSubmitting}
               className="mt-8 w-full rounded-full bg-accent py-3.5 text-sm font-medium text-white transition-colors hover:bg-accent-hover disabled:opacity-50"
             >
-              {isSubmitting ? "Redirigiendo a Wompi…" : `Pagar ${formatCOP(subtotal)}`}
+              {IS_DEMO
+                ? "Pago deshabilitado en la demo"
+                : isSubmitting
+                  ? "Redirigiendo a Wompi…"
+                  : `Pagar ${formatCOP(subtotal)}`}
             </button>
 
             <p className="mt-4 text-center text-xs text-muted">
@@ -138,7 +169,7 @@ export default function CheckoutPage() {
                 <li key={`${line.slug}-${line.color}`} className="flex gap-3 text-sm">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img
-                    src={line.image}
+                    src={asset(line.image)}
                     alt=""
                     className="h-14 w-14 shrink-0 rounded-lg bg-white object-cover"
                   />

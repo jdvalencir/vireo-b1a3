@@ -1,0 +1,81 @@
+# Publica el CATÁLOGO (sin pagos) en GitHub Pages.
+#
+# Por qué "sin pagos": GitHub Pages solo sirve archivos estáticos, no
+# ejecuta código de servidor. Cobrar exige firmar la transacción con
+# WOMPI_INTEGRITY_SECRET, y ese secreto no puede viajar al navegador:
+# quien lo tenga puede firmar un cobro por el monto que quiera.
+#
+# Para la tienda que sí cobra hace falta un hosting con Node
+# (Vercel, Railway, un VPS...). Ver README.
+name: Deploy a GitHub Pages
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+# El token solo necesita esto, nada más.
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Si empujas dos veces seguidas, que no se pisen los despliegues.
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  construir:
+    name: Construir sitio estático
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 24
+          cache: npm
+
+      - name: Instalar dependencias
+        run: npm ci
+
+      - name: Configurar Pages
+        id: pages
+        uses: actions/configure-pages@v5
+
+      # Next se niega a exportar a estático si existen rutas de servidor,
+      # y con razón. Las quitamos SOLO en esta copia desechable del
+      # runner; en tu repo siguen intactas.
+      - name: Quitar rutas que necesitan servidor
+        run: rm -rf src/app/api src/app/checkout/resultado
+
+      - name: Construir
+        env:
+          BUILD_TARGET: pages
+          # El sitio vive en usuario.github.io/<repo>, no en la raíz.
+          NEXT_PUBLIC_BASE_PATH: /${{ github.event.repository.name }}
+          # Apaga el botón de pagar y muestra el aviso de demo.
+          NEXT_PUBLIC_DEMO_MODE: "true"
+        run: npm run build
+
+      # _next empieza por guion bajo y Jekyll ignoraría esa carpeta.
+      # Con el despliegue por Actions no corre Jekyll, pero este archivo
+      # no cuesta nada y evita sorpresas.
+      - name: Desactivar Jekyll
+        run: touch out/.nojekyll
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: out
+
+  desplegar:
+    name: Publicar
+    needs: construir
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

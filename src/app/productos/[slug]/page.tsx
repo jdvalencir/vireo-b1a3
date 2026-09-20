@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import AddToCart from "@/components/AddToCart";
 import ProductCard from "@/components/ProductCard";
 import { getProduct, products } from "@/lib/products";
+import { asset } from "@/lib/asset";
 
 type Props = { params: Promise<{ slug: string }> };
 
@@ -51,7 +52,7 @@ export default async function ProductPage({ params }: Props) {
                 /* eslint-disable-next-line @next/next/no-img-element */
                 <img
                   key={image}
-                  src={image}
+                  src={asset(image)}
                   alt={`${product.name} — vista ${index + 1}`}
                   className="w-full rounded-3xl bg-surface-alt object-cover"
                 />
