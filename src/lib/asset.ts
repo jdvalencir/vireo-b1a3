@@ -2,7 +2,7 @@
  * Prefijo para archivos de /public.
  *
  * ¿Por qué hace falta? En GitHub Pages el sitio no vive en la raíz del
- * dominio sino en un subdirectorio: jdvalencir.github.io/tienda-cuero.
+ * dominio sino en un subdirectorio: usuario.github.io/<nombre-del-repo>.
  * Next reescribe solo por su cuenta los <Link> y next/image; una ruta
  * escrita a mano como <img src="/hero.svg"> apuntaría a
  * jdvalencir.github.io/hero.svg y daría 404.

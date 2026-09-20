@@ -19,7 +19,7 @@ const isStaticExport = process.env.BUILD_TARGET === "pages";
 const nextConfig: NextConfig = isStaticExport
   ? {
       output: "export",
-      // En Pages el sitio cuelga de /tienda-cuero, no de la raíz.
+      // En Pages el sitio cuelga de /<nombre-del-repo>, no de la raíz.
       basePath: process.env.NEXT_PUBLIC_BASE_PATH ?? "",
       // Genera /productos/index.html en vez de /productos.html.
       trailingSlash: true,

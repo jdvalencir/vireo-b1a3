@@ -154,7 +154,7 @@ El workflow hace tres cosas particulares:
 1. `rm -rf src/app/api src/app/checkout/resultado` — Next se niega a
    exportar a estático si hay rutas de servidor. Se borran solo en la copia
    desechable del runner; en tu repo siguen intactas.
-2. `NEXT_PUBLIC_BASE_PATH=/tienda-cuero` — en Pages el sitio cuelga de un
+2. `NEXT_PUBLIC_BASE_PATH=/vireo-b1a3` — en Pages el sitio cuelga de un
    subdirectorio. Next reescribe los `<Link>` solo, pero las rutas de
    imágenes escritas a mano no, y por eso existe `src/lib/asset.ts`.
 3. `NEXT_PUBLIC_DEMO_MODE=true` — apaga el botón de pagar y muestra el
@@ -164,7 +164,7 @@ Para probar ese build en tu máquina:
 
 ```bash
 mv src/app/api /tmp/ && mv src/app/checkout/resultado /tmp/
-BUILD_TARGET=pages NEXT_PUBLIC_BASE_PATH=/tienda-cuero \
+BUILD_TARGET=pages NEXT_PUBLIC_BASE_PATH=/vireo-b1a3 \
   NEXT_PUBLIC_DEMO_MODE=true npm run build
 mv /tmp/api src/app/ && mv /tmp/resultado src/app/checkout/
 ```
