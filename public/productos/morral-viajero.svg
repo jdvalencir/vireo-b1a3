@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 1200" width="1200" height="1200" role="img" aria-label="Morral Viajero">
+  <defs>
+    <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#A0522D"/>
+      <stop offset="100%" stop-color="#6B3410"/>
+    </linearGradient>
+    <filter id="grain">
+      <feTurbulence type="fractalNoise" baseFrequency="0.85" numOctaves="4" seed="1"/>
+      <feColorMatrix type="saturate" values="0"/>
+      <feComponentTransfer><feFuncA type="linear" slope="0.14"/></feComponentTransfer>
+    </filter>
+    <radialGradient id="light" cx="35%" cy="30%" r="70%">
+      <stop offset="0%" stop-color="#ffffff" stop-opacity="0.30"/>
+      <stop offset="100%" stop-color="#000000" stop-opacity="0.28"/>
+    </radialGradient>
+  </defs>
+  <rect width="1200" height="1200" fill="#f5f5f7"/>
+  <rect x="150" y="150" width="900" height="900" rx="72" fill="url(#g)"/>
+  <rect x="150" y="150" width="900" height="900" rx="72" fill="url(#light)"/>
+  <rect x="150" y="150" width="900" height="900" rx="72" filter="url(#grain)" opacity="0.55"/>
+  <rect x="150" y="150" width="900" height="900" rx="72" fill="none" stroke="#000" stroke-opacity="0.12" stroke-width="2"/>
+  <text x="600" y="1128" text-anchor="middle" font-family="-apple-system, Segoe UI, Roboto, sans-serif" font-size="34" fill="#6e6e73">Morral Viajero</text>
+</svg>
